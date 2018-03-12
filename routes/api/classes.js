@@ -34,96 +34,63 @@ router.get('/getAll', function(req, res, next) {
       }
     });
 });
-//this function can be used in both adding and updating classes
+//to have overlaps:
+//  check if days of requested class are in a class 
+//  then check if the time will overlap : 
+//* assumes that start_time & end_time of requested_class are correct
 function validateClass(req_class, full_name){
     var deferred = q.defer();
-    db.classes.find({}).toArray(function(err, classes){
+    db.classes.find({$and: [
+        //for checking of days
+        {days: {$in: req_class.days}},
+        //for checking of overlapping times
+        {$and: [
+                {start_time: {$lte: req_class.end_time}}, 
+                {end_time: {$gte: req_class.start_time}}
+            ]
+        },
+        //other parameters to consider
+        {$or: [
+                {teacher: full_name},
+                {room: req_class.room}
+            ]
+        }
+    ]})
+    .toArray(function(err, classes){
         if(err){
             console.log(err);
-            deferred.reject({message: 'Database Error. Contact Administrator'});
-            //return false;     
+            deferred.reject({error_message: 'Database Error. Contact Administrator'});
         }
-        //if no classes, then room is free. therefore, can add
+        //no overlaps
         else if(classes.length == 0){
-            //return true;
-            console.log('no similar classes found');
+            console.log(classes);
             deferred.resolve();
         }
+        //overlap
         else{
-            //loop each class
-            for(var i = 0; i < classes.length; i++){
-                //console.log(classes[i]);
-                
-                //skip if updating the class itself
-                if(req_class._id != undefined){
-                    if(req_class._id == classes[i]._id){
-                        continue;
-                    }
-                }
-                else if(isOverlap(req_class.start_time, req_class.end_time, classes[i].start_time, classes[i].end_time)){
-                    //okay to overlap if different teachers and different rooms
-                    if(full_name != classes[i].teacher && req_class.room != classes[i].room){
-                        deferred.resolve();
-                    }
-                    else if(hasSameDay(classes[i].days, req_class.days)){
-                        deferred.reject({message: 'Schedule overlaps with another class'});
-                    }
-                }
-                /* //loop each day of each class
-                for(var k = 0; k < classes[i].days.length; k++){
-                    //find the day in the req.body.days
-                    //loop each day in the req.body.days then execute overlap statement if same day
-                    for(var l = 0; l < req_class.days.length; l++){
-                        if(req_class.days[l] == classes[i].days[k]){
-                            //enter condition for overlapping times here
-                            //can have the same days but must not have overlapping times per teacher
-                            if(isOverlap(req_class.start_time, req_class.end_time, classes[i].start_time, classes[i].end_time)){
-                                //if two teachers have same day & time, they must not have the same room
-                                if(full_name != classes[i].teacher && req_class.room != classes[i].room){
-                                    deferred.resolve();
-                                }
-                                else{
-                                    console.log('overlapped');
-                                    deferred.reject({message: 'Schedule overlaps with another class'});
-                                    break outerloop;
-                                }
-                            }
-                        }
-                    }
-                } */
+            //check if the overlap is the requested_class itself (during updating a class)
+            var isUpdate = classes.find(function(aClass){
+                return aClass._id == req_class._id;
+            });
+
+            //
+            if(isUpdate != undefined){
+                deferred.resolve();
             }
-            //return true;
-            deferred.resolve();
+            else{
+                deferred.reject({error_message: 'Schedule overlaps with another class'});
+            }
         }
     });
 
     return deferred.promise;
 }
 
-function isOverlap(rq_st, rq_et, lp_st, lp_et){
-    return (rq_et <= lp_st || rq_st >= lp_et) ? false : true;
-}
-
-function hasSameDay(per_class_days, req_class_days){
-    var hasSameDay = false;
-    outerloop:
-    for(var i = 0; i < per_class_days.length; i++){
-        for(var k = 0; k < req_class_days.length; k++){
-            if(req_class_days[k] == per_class_days[i]){
-                hasSameDay = true;
-                break outerloop;
-            }
-        }
-    }
-
-    return hasSameDay;
-}
-
 router.post('/add', function(req, res, next){
-    validateClass(req.body, req.session.user.full_name).then(function(){
+    validateClass(req.body, req.session.user.full_name).then(function(){        
         addClass();
-    }).catch(function(err){
-        res.status(400).send({error_message: err.message});
+    }).catch(function(error){
+        res.status(400).send({error_message: error.error_message});
     });    
 
     function addClass(){
@@ -158,8 +125,8 @@ router.put('/update', function(req, res, next){
     //check for days and time
     validateClass(req.body, req.session.user.full_name).then(function(){
         updateClass();
-    }).catch(function(err){
-        res.status(400).send({error_message: err.message});
+    }).catch(function(error){
+        res.status(400).send({error_message: error.error_message});
     });
 
     function updateClass(){
@@ -180,6 +147,8 @@ router.put('/update', function(req, res, next){
                     'than the current number of students enrolled in this class'});
                 }
                 else{
+
+                    //explicitly state fields to be updated
                     var inputted_class = {
                         name: req.body.name,
                         capacity: req.body.capacity,
@@ -222,27 +191,26 @@ router.put('/enroll', function(req, res, next){
             if(aClass.students.indexOf(req.session.user.full_name) == -1){
                 var canEnroll = true;
                 //check the enrolled classes of the students then look for overlapped times
-                db.classes.find({students: req.session.user.full_name}).toArray(function(err, classes){
+                db.classes.find({$and: [
+                    //for checking of days
+                    {days: {$in: aClass.days}},
+                    //for checking of overlapping times
+                    {$and: [
+                        {start_time: {$lte: aClass.end_time}}, 
+                        {end_time: {$gte: aClass.start_time}}
+                    ]},
+                    //classes where the student belongs
+                    {students: req.session.user.full_name},
+                ]})
+                .toArray(function(err, classes){
                     if(err){
                         res.status(400).send({error_message: 'Database error. Contact Administrator'});
                     }
+                    else if(classes.length == 0) {
+                        enrollStudent();
+                    }
                     else{
-                        console.log('classes retrieved', classes);
-                        for(var i = 0; i < classes.length; i++){
-                            if(isOverlap(aClass.start_time, aClass.end_time, classes[i].start_time, classes[i].end_time)){
-                                if(hasSameDay(classes[i].days, aClass.days)){
-                                    canEnroll = false;
-                                    break;
-                                }
-                            }
-                        }
-                        
-                        if(canEnroll){
-                            enrollStudent();
-                        }
-                        else{
-                            res.status(400).send({error_message: 'Schedule overlaps with another enrolled class'});
-                        }
+                        res.status(400).send({error_message: 'Schedule overlaps with another enrolled class'});
                     }
                 });
 
