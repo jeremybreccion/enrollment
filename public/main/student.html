@@ -1,0 +1,39 @@
+<i>{{success_message}}{{error_message}}</i><br><br>
+<div class="row">
+    <div class="col-md-3">
+        <input type="text" class="form-control" ng-model="search" placeholder="Search">
+        <hr>
+        <label>Enrolled Classes</label>
+        <br><br>
+        <div ng-repeat="class in enrolled_class_list">
+            {{class.name}}<br>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <table class="table">
+            <thead>
+                <th>Class</th>
+                <th>Teacher</th>
+                <th>Days</th>
+                <th>Time</th>
+                <th></th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="class in class_list | filter: search">
+                    <td>{{class.name}}</td>
+                    <td>{{class.teacher}}</td>
+                    <td>{{displayDays(class.days)}}</td>
+                    <td>{{class.start_time}} - {{class.end_time}}</td>
+                    <td>
+                        <button type="button" class="btn btn-success" data-toggle="tooltip" title="Enroll" ng-if="!isEnrolled(class)" ng-click="resetMessages(); enroll(class)">
+                            <span class="glyphicon glyphicon-hand-up"></span>
+                        </button>
+                        <button type="button" class="btn btn-danger" data-toggle="tooltip" title="Drop" ng-if="isEnrolled(class)" ng-click="resetMessages(); drop(class)">
+                            <span class="glyphicon glyphicon-hand-down"></span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

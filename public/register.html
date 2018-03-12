@@ -1,0 +1,39 @@
+<div class="container">
+    <i style="color: red; padding: 0px">{{error_message}}</i><br>
+    <form ng-submit="register()">
+        <!-- <label>Username:</label>
+        <input type="text" class="form-control" ng-model="user.username" required>
+        <br> -->
+        *Username will be first_name.last_name <br>
+        <label>First Name:</label>
+        <input type="text" class="form-control" ng-model="user.first_name" required>
+        <br>
+        <label>Last Name:</label>
+        <input type="text" class="form-control" ng-model="user.last_name" required>
+        <br>
+        <label>Password:</label>
+        <input type="password" class="form-control" ng-model="user.password" required>
+        <br>
+        <label>Confirm Password:</label>
+        <input type="password" class="form-control" ng-model="user.confirm_password" required>
+        <br>
+        <label>Email:</label>
+        <input type="email" class="form-control" ng-model="user.email" required>
+        <br>
+        <!-- <label>Role:</label>
+        <select class="form-control" ng-model="user.role" required>
+            <option value="">-- Select --</option>
+            <option>Admin</option>
+            <option>Teacher</option>
+            <option>Student</option>
+        </select>
+        <br> -->
+        <button type="submit" class="btn btn-primary">
+            <span class="glyphicon glyphicon-save"></span>
+            &nbsp;
+            Register
+        </button>
+        &nbsp;
+        <a ui-sref="login">Click here to login</a>
+    </form>
+</div>

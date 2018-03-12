@@ -1,0 +1,87 @@
+{{success_message}}
+<div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-3">
+        <img ng-src="images/profile_pictures/{{user.profile_picture}}" class="img-rounded" height="200" width="200">
+        <br><br>
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#profilePictureModal" ng-click="resetMessages()">
+            Update Profile Picture
+        </button>
+    </div>
+    <div class="col-sm-5">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span class="glyphicon glyphicon-user"></span>
+                &nbsp;
+                Account
+            </div>
+            <div class="panel-body">
+                <table class="table">
+                    <tbody>
+                        <tr ng-repeat="(key, val) in user" ng-if="key != '_id' && key != 'profile_picture'">
+                            <td style="text-transform: capitalize"><b>{{key}}</b></td>
+                            <td style="text-align: right">{{val}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <label>Set Language</label>
+                <select class="form-control" ng-model="set_language" ng-change="setLanguage()">
+                    <option value="english">English</option>
+                    <option value="日本語">日本語</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary">Edit Details (not yet functioning)</button>
+                <button class="btn btn-default" data-toggle="modal" data-target="#changePasswordModal" ng-click="resetMessages()">
+                    <span class="glyphicon glyphicon-pencil"></span>
+                    &nbsp;
+                    Change Password
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-1"></div>
+</div>
+
+<div id="changePasswordModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">Change Password</div>
+            <form ng-submit="changePassword()">
+            <div class="modal-body">
+                <i style="color: red; padding: 0px">{{error_message}}</i>
+                <br><br>
+                <label>Old Password:</label>
+                <input type="password" class="form-control" ng-model="password.old" required>
+                <label>New Password:</label>
+                <input type="password" class="form-control" ng-model="password.new" required>
+                <label>Confirm New Password:</label>
+                <input type="password" class="form-control" ng-model="password.confirm" required>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Save</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="profilePictureModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">Update Profile Picture</div>
+                <form ng-submit="updateProfilePicture()">
+                <div class="modal-body">
+                    <i style="color: red; padding: 0px">{{error_message}}</i>
+                    <br><br>
+                    <input type="file" class="form-control" id="file" accept="image/*">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>

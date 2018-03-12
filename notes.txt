@@ -1,0 +1,46 @@
+ROLES
+
+Admin: add & delete Teachers & Students. delete Admins (?)
+
+Teachers: add, edit, delete classes
+Students: enrol / drop classes
+
+
+-------------------------------------------------------------------
+
+@ admin.js
+    cannot catch email error for catch function
+
+@register of accounts
+    register for admins is separated and no need for email send
+    register for students & teachers need email send
+
+@emails
+    admin = jeremybreccion@gmail.com
+    students & teachers = jeremybreccion@yahoo.com (as of 2018-03-02)
+    //since email is not yet unique
+
+@delete account
+    currently, no prevention of deleting logged in users from other computers
+    e.g. admin A should not be able to delete student B if B is logged in from another computer
+
+@classes
+    unique class names for each teacher. same class names may be shared by teachers
+    no time properties. therefore no conflicts yet and no prevention of conflict in sched
+
+    for now, Intecal is different from intecal & INTECAL (case sensitive)
+
+    will try to have room & days (M-F only)
+    @days
+        since there's no time yet, classes are assumed to be full day :)
+    @room
+        type text only
+        for now, a909 is different from A909 (case sensitive)
+
+    @time
+        there is now time, and it is assumed to be the same for all included days
+    
+    @all
+        not yet implemented:
+            cannot have more than 1 classes that have the same day and overlapping times
+            cannot have more than 1 classes on the same day, different rooms, and overlappting times

@@ -1,0 +1,14 @@
+{
+    "english" : {
+        "sample_string" : "I'm sleepy",
+        "setLanguage" : {
+            "success_message" : "Language set to English"
+        }
+    },
+    "日本語" : {
+       "sample_string" : "ねむい",
+       "setLanguage" : {
+            "success_message" : "日本語になります"
+        }
+    }
+}

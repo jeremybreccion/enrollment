@@ -1,0 +1,111 @@
+<i>{{success_message}}{{error_message}}</i><br><br>
+<div class="row">
+    <div class="col-md-3">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#classModal" ng-click="resetClass()">
+            <span class="glyphicon glyphicon-plus"></span>
+            &nbsp;
+            Class
+        </button>
+        
+        <br><hr>
+        <input type="text" class="form-control" ng-model="search" placeholder="Search">
+    </div>
+    <div class="col-md-9">
+        <i style="color:red">Name & Room are case-sensitive</i>
+        <table class="table">
+            <thead>
+                <th>Name</th>
+                <th>Room</th>
+                <th>Days</th>
+                <th>Time</th>
+                <th>Student Count</th>
+                <th></th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="class in class_list | filter: search">
+                    <td>{{class.name}}</td>
+                    <td>{{class.room}}</td>
+                    <td>{{displayDays(class.days)}}</td>
+                    <td>{{class.start_time}} - {{class.end_time}}</td>
+                    <td>{{class.students.length}} / {{class.capacity}}</td>
+                    <td>
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#studentListModal" ng-click="selectClass(class)">
+                            <span class="glyphicon glyphicon-list-alt"></span>
+                        </button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#classModal" ng-click="editClass(class)">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                        <button type="button" class="btn btn-danger" data-toggle="tooltip" title="Delete" ng-click="deleteClass(class)">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="classModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><b>Class</b></div>
+            <form ng-submit="addOrUpdateClass()">
+            <div class="modal-body">
+                <i style="color: red">{{modal_error_message}}</i><br>
+                <label>Name:</label>
+                <input type="text" class="form-control" ng-model="class_model.name" required>
+                <br>
+                <label>Capacity:</label>
+                <input type="number" class="form-control" ng-model="class_model.capacity" min="1" required>
+                <br>
+                <label>Room:</label>
+                <input type="text" class="form-control" ng-model="class_model.room" required>
+                <br>
+                <label>Days:</label>
+                <select class="form-control" ng-model="class_model.days" required multiple>
+                    <option>Monday</option>
+                    <option>Tuesday</option>
+                    <option>Wednesday</option>
+                    <option>Thursday</option>
+                    <option>Friday</option>
+                </select>
+                <br>
+                <label>Time:</label>
+                <div class="form-inline">
+                    <label>From:</label>
+                    <input type="time" class="form-control" ng-model="class_model.start_time" required>
+                    <label>To:</label>
+                    <input type="time" class="form-control" ng-model="class_model.end_time" required>
+                </div>
+                <br>
+                <!-- <label>Times:</label>
+                <div ng-repeat="day in class_model.days">
+                    <b>{{day.name}}</b>
+                    <input type="time" class="form-control" ng-model="class_model.days.day_time" required>
+                </div> -->
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="studentListModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">{{selected_class.name}} students</div>
+                <form ng-submit="addOrUpdateClass()">
+                <div class="modal-body">
+                    <div ng-repeat="student in selected_class.students">
+                        {{student}}<br>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>

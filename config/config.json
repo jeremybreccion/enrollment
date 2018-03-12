@@ -1,0 +1,24 @@
+{
+    "session": {
+        "secret": "Bjso)sidKS$ja#sKJS!!AAhuP&PjsdjhsdEBcjBJNDBS#$%&",
+        "duration":{
+            "maxAge": 3600000,
+            "expiresIn": "1h"
+        }
+    },
+    "database": {
+        "name": "mongodb://localhost:27017/enrollment-sample",
+        "collections": {
+            "accounts": "accounts",
+            "classes": "classes"
+        }
+    },
+    "exempted_routes": [
+        "/session", 
+        "/users/login", 
+        "/users/register", 
+        "/users/logout", 
+        "/users/forgotPassword",
+        "/languages/getLanguages"
+    ]
+}

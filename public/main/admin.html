@@ -1,0 +1,69 @@
+<i>{{success_message}}{{error_message}}</i><br><br>
+<div class="row">
+    <div class="col-md-3">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#accountModal">
+            <span class="glyphicon glyphicon-plus"></span>
+            &nbsp;
+            Account
+        </button>
+        <br><hr>
+        <input type="text" class="form-control" ng-model="search" placeholder="Search">
+    </div>
+    <div class="col-md-9">
+        <table class="table">
+            <thead>
+                <th>Name</th>
+                <th>Occupation</th>
+                <th>Account Created</th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="account in account_list | filter: search">
+                    <td>{{account.last_name}}, {{account.first_name}}</td>
+                    <td>{{account.role}}</td>
+                    <td>{{account.created_date}}</td>
+                    <td>
+                        <button type="button" class="btn btn-danger" data-toggle="tooltip" title="Delete" ng-click="deleteAccount(account)">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="accountModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header"><b>New Account</b></div>
+            <form ng-submit="register()">
+            <div class="modal-body">
+                <i style="color: red">{{modal_error_message}}</i><br>
+                *Username will be first_name.last_name <br>
+                *Password will be auto-generated
+                <br><br>
+                <label>First Name:</label>
+                <input type="text" class="form-control" ng-model="account_model.first_name" required>
+                <br>
+                <label>Last Name:</label>
+                <input type="text" class="form-control" ng-model="account_model.last_name" required>
+                <br>
+                <label>Email:</label>
+                <input type="email" class="form-control" ng-model="account_model.email" required>
+                <br>
+                <label>Role:</label>
+                    <select class="form-control" ng-model="account_model.role" required>
+                        <option value="">-- Select --</option>
+                        <option>Teacher</option>
+                        <option>Student</option>
+                    </select>
+                <br>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-success">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
