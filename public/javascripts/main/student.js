@@ -6,7 +6,7 @@ app.controller('StudentController', function($scope, ClassService, ModalService,
 
     $scope.isEnrolled = function(selected_class){
         //if indexOf results != -1, student's full name is included
-        return (selected_class.students.length > 0 && selected_class.students.indexOf($rootScope.current_user.full_name) != 1) ? true : false;
+        return (selected_class.students.length > 0 && selected_class.students.indexOf($rootScope.current_user.full_name) != -1) ? true : false;
     }
 
     function getAllClasses(){
